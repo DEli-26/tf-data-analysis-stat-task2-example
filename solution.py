@@ -2,6 +2,8 @@ import pandas as pd
 import numpy as np
 
 from scipy.stats import norm
+from scipy.stats import chi2
+from scipy.stats import expon
 
 
 chat_id = 723988166 # Ваш chat ID, не меняйте название переменной
@@ -11,8 +13,9 @@ def solution(p: float, x: np.array) -> tuple:
     # Это будет вашим решением
     # Не меняйте название функции и её аргументы
     alpha = 1 - p
-    x = np.diff(np.diff(x))
-    loc = x.mean()
-    scale = np.sqrt(np.var(x)) / np.sqrt(len(x))
-    return loc - scale * norm.ppf(1 - alpha / 2), \
-           loc - scale * norm.ppf(alpha / 2)
+    degree_freedom = len(x)
+    x_expon = 0.5 - x
+    a = chi2.ppf(1 - alpha / 2, 2 * degree_freedom)
+    b = chi2.ppf(alpha / 2, 2 * degree_freedom)
+    return 0.5 - b / (2 * degree_freedom * x_expon.mean()), \
+           0.5 - a / (2 * degree_freedom * x_expon.mean())
